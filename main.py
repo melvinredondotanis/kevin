@@ -83,7 +83,7 @@ def choose_recipent():
 
 def send_message():
     try:
-        message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}"
+        message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}\nPour savoir quelles plantes doivent être arrosées aujourd'hui, consulte la fiche de renseignement dans les locaux. Si tu es absent aujourd'hui, demande à quelqu'un de le faire à ta place."
         client.chat_postMessage(channel=topic, text=message)
         logger.info("sending the message")
     except:
@@ -92,12 +92,11 @@ def send_message():
 month = datetime.datetime.now().month
 
 if 3 <= month <= 8:
-    schedule.every().day.at(hour).do(send_message)
+    schedule.every().tuesday.at(hour).do(send_message)
+    schedule.every().wednesday.at(hour).do(send_message)
+    schedule.every().thursday.at(hour).do(send_message)
 else:
-    schedule.every().day.at(hour).do(send_message)
-
-#schedule.every().monday.at("12:40").do(job_1)
-#schedule.every().tuesday.at("16:40").do(job_2)
+    schedule.every().wednesday.at(hour).do(send_message)
 
 if __name__ == "__main__":
     while True:

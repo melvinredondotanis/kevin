@@ -52,6 +52,26 @@ messages = [
     "Les plantes pensent à toi - surtout à ton arrosoir ! 🌿💦",
     "Oublie les super-héros, aujourd'hui tu es le super-arroseur des plantes ! 🌸💧",
     "Les plantes sont en mode 'Thirsty Thursday' - à toi de jouer ! 🌵🥤",
+    "Les feuilles te saluent bien bas et te demandent une petite gorgée. 🌿🍶",
+    "Les racines t'appellent en urgence : 'H2O requis !' 🌱💧",
+    "Les plantes ont une requête spéciale : de l'eau fraîche et pure. 🌻💦",
+    "Les fleurs ont soif d'amour et d'eau fraîche - à toi de jouer ! 🌼💧",
+    "Il est temps de transformer ton jardin en oasis. 🌿💧",
+    "Les plantes te supplient : 'Pas de sécheresse aujourd'hui, s'il te plaît !' 🌵💦",
+    "Les plantes t'attendent pour une danse de la pluie improvisée ! 🌳🌧️",
+    "Les bourgeons t'envoient des ondes positives - avec une petite demande d'arrosage. 🌸💦",
+    "Les plantes te regardent avec des yeux pétillants d'espoir ! 🌼💧",
+    "Les plantes murmurent : 'Une gorgée de plus et nous serons heureuses !' 🌿💦",
+    "Les feuilles frémissent à l'idée de recevoir de l'eau - c'est à toi de jouer ! 🌱💧",
+    "Les plantes organisent une fête de l'eau - et tu es l'invité d'honneur ! 🌻💧",
+    "Les tiges te tendent les bras pour une pluie bienfaisante. 🌿🌧️",
+    "Les plantes te disent : 'Merci d'avance pour ce rafraîchissement tant attendu !' 🌳💦",
+    "Les fleurs t'offrent leurs plus beaux pétales en échange d'un peu d'eau. 🌼💧",
+    "Les plantes rêvent d'une douche rafraîchissante - fais leur ce plaisir ! 🌿🚿",
+    "Les racines chantent 'Sous la pluie' - aide-les à réaliser leur rêve ! 🌱🌧️",
+    "Les plantes se languissent de ton arrosoir magique. 🌿💧",
+    "Les bourgeons sont prêts à éclore, juste une goutte d'eau de plus ! 🌸💦",
+    "Les plantes préparent une symphonie de gratitude pour ton prochain arrosage. 🌿🎶💧"
 ]
 hour = "09:15"
 

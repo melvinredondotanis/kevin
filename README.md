@@ -28,13 +28,13 @@ git clone https://github.com/melvinredondotanis/kevin
 ```bash
 mkdir .kevin && cp kevin/main.py .kevin
 echo "SLACK_TOKEN=your_token" > .kevin/.env
-sudo cp kevin/kevin.service /etc/systemctl/system
+sudo cp kevin/kevin.service /etc/systemd/system
 cd .kevin
 python3 -m venv env
-source bin/activate
-pip install -r requirements.txt
+source env/bin/activate
+pip install -r ../kevin/requirements.txt
 deactivate
-cd ~ && rm -r kevin
+cd ~ && rm -rf kevin
 ```
 
 3. Activer le service

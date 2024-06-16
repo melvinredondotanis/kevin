@@ -2,6 +2,7 @@ import os
 import datetime
 import time
 import random
+import logging
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -9,9 +10,27 @@ import slack
 import schedule
 
 
-env_path = Path(".") / ".env"
-load_dotenv(dotenv_path=env_path)
-client = slack.WebClient(token=os.environ["SLACK_TOKEN"])
+logging.basicConfig(
+    format='[%(asctime)s] :: %(levelname)s : %(message)s',
+    encoding="utf-8",
+    level=logging.DEBUG,
+    handlers=[
+        logging.FileHandler('kevin.log'),
+        logging.StreamHandler()
+        ]
+)
+
+logger = logging.getLogger(__name__)
+
+try:
+    env_path = Path(".") / ".env"
+    load_dotenv(dotenv_path=env_path)
+    client = slack.WebClient(token=os.environ["SLACK_TOKEN"])
+    logger.info("load '.env'")
+except:
+    logger.error("'.env' or 'SLACK_TOKEN' not found")
+    logger.info("stop kevin")
+    quit()
 
 topic = "XXX"
 recipents = {
@@ -39,11 +58,16 @@ hour = "09:15"
 def choose_recipent():
     recipent = random.choice(list(recipents.keys()))
     recipent_id = recipents[recipent]
+    logger.info(f"{recipent} is the future recipent")
     return recipent_id
 
 def send_message():
-    message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}"
-    client.chat_postMessage(channel=topic, text=message)
+    try:
+        message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}"
+        client.chat_postMessage(channel=topic, text=message)
+        logger.info("sending the message")
+    except:
+        logger.error("unable to send message")
 
 month = datetime.datetime.now().month
 

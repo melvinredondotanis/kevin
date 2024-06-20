@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import slack
 import schedule
 
+#Liste des étudiants ayant déjà arrosé les plantes
+students_already_passed = []
 
 logging.basicConfig(
     format='[%(asctime)s] :: %(levelname)s : %(message)s',
@@ -32,14 +34,9 @@ except:
     logger.info("stop kevin")
     quit()
 
-topic = "XXX"
+topic = "XXX" #ID de la chaîne Slack
 recipents = {
-    "Alice": "XXX",
-    "Bob": "XXX",
-    "Charlie": "XXX",
-    "David": "XXX",
-    "Eve": "XXX",
-    "Frank": "XXX"
+    #Étudiants sous forme Nom : ID slack
 }
 messages = [
     "C'est l'heure de jouer au jardinier pour les plantes ! 🌿💧",
@@ -76,9 +73,19 @@ messages = [
 hour = "09:15"
 
 def choose_recipent():
-    recipent = random.choice(list(recipents.keys()))
+    global students_already_passed
+
+    if len(students_already_passed) == len(recipents.keys()):
+        students_already_passed = []
+    
+    recipent = ""
+    while recipent == "" or recipent in students_already_passed:
+        recipent = random.choice(list(recipents.keys()))
+
+    students_already_passed.append(recipent)
     recipent_id = recipents[recipent]
     logger.info(f"{recipent} is the future recipent")
+
     return recipent_id
 
 def send_message():
@@ -86,7 +93,8 @@ def send_message():
         message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}\nPour savoir quelles plantes doivent être arrosées aujourd'hui, consulte la fiche de renseignement dans les locaux. Si tu es absent aujourd'hui, demande à quelqu'un de le faire à ta place."
         client.chat_postMessage(channel=topic, text=message)
         logger.info("sending the message")
-    except:
+    except Exception as err:
+        print(err)
         logger.error("unable to send message")
 
 month = datetime.datetime.now().month

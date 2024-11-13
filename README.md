@@ -2,12 +2,9 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
-- [Contact](#contact)
 
 ## Introduction
 Welcome to the Kevin Project! This project aims to [brief description of the project's purpose].

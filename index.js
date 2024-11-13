@@ -1,45 +1,25 @@
-import os
-import datetime
-import time
-import random
-import logging
-from pathlib import Path
+const { App } = require('@slack/bolt');
+const dotenv = require('dotenv');
+const schedule = require('node-schedule');
+const fs = require('fs');
 
-from dotenv import load_dotenv
-import slack
-import schedule
+dotenv.config();
 
-#Liste des étudiants ayant déjà arrosé les plantes
-students_already_passed = []
+const studentsAlreadyPassed = [];
+const logger = fs.createWriteStream('kevin.log', { flags: 'a' });
 
-logging.basicConfig(
-    format='[%(asctime)s] :: %(levelname)s : %(message)s',
-    encoding="utf-8",
-    level=logging.DEBUG,
-    handlers=[
-        logging.FileHandler('kevin.log'),
-        logging.StreamHandler()
-        ]
-)
+const app = new App({
+    token: process.env.SLACK_TOKEN,
+    signingSecret: process.env.SLACK_SIGNING_SECRET
+});
 
-logger = logging.getLogger(__name__)
+const topic = 'C07S58L52G0';
+const recipients = {
+    Luca:U07Q1SVHVU6,
+};
 
-try:
-    env_path = Path(".") / ".env"
-    load_dotenv(dotenv_path=env_path)
-    client = slack.WebClient(token=os.environ["SLACK_TOKEN"])
-    logger.info("load '.env'")
-except:
-    logger.error("'.env' or 'SLACK_TOKEN' not found")
-    logger.info("stop kevin")
-    quit()
-
-topic = "XXX" #ID de la chaîne Slack
-recipents = {
-    #Étudiants sous forme Nom : ID slack
-}
-messages = [
-    "C'est l'heure de jouer au jardinier pour les plantes ! 🌿💧",
+const messages = [
+"C'est l'heure de jouer au jardinier pour les plantes ! 🌿💧",
     "Les plantes te lancent un regard assoiffé - à toi de jouer ! 🌱💦",
     "Ne fais pas de chichis, les plantes t'attendent avec impatience ! 🌻🚿",
     "Les plantes ont un message pour toi : 'On a soif, s'il te plaît !' 🌵💧",
@@ -69,44 +49,57 @@ messages = [
     "Les plantes se languissent de ton arrosoir magique. 🌿💧",
     "Les bourgeons sont prêts à éclore, juste une goutte d'eau de plus ! 🌸💦",
     "Les plantes préparent une symphonie de gratitude pour ton prochain arrosage. 🌿🎶💧"
-]
-hour = "09:15"
+];
+const hour = '09:15';
 
-def choose_recipent():
-    global students_already_passed
+function chooseRecipient() {
+    if (studentsAlreadyPassed.length === Object.keys(recipients).length) {
+        studentsAlreadyPassed.length = 0;
+    }
 
-    if len(students_already_passed) == len(recipents.keys()):
-        students_already_passed = []
-    
-    recipent = ""
-    while recipent == "" or recipent in students_already_passed:
-        recipent = random.choice(list(recipents.keys()))
+    let recipient;
+    do {
+        const keys = Object.keys(recipients);
+        recipient = keys[Math.floor(Math.random() * keys.length)];
+    } while (studentsAlreadyPassed.includes(recipient));
 
-    students_already_passed.append(recipent)
-    recipent_id = recipents[recipent]
-    logger.info(f"{recipent} is the future recipent")
+    studentsAlreadyPassed.push(recipient);
+    const recipientId = recipients[recipient];
+    logger.write(`[INFO] ${recipient} a été sélectionné pour arroser les plantes\n`);
 
-    return recipent_id
+    return recipientId;
+}
 
-def send_message():
-    try:
-        message = f"Salut <@{choose_recipent()}> !\n{random.choice(messages)}\nPour savoir quelles plantes doivent être arrosées aujourd'hui, consulte la fiche de renseignement dans les locaux. Si tu es absent aujourd'hui, demande à quelqu'un de le faire à ta place."
-        client.chat_postMessage(channel=topic, text=message)
-        logger.info("sending the message")
-    except Exception as err:
-        print(err)
-        logger.error("unable to send message")
+async function sendMessage() {
+    const message = `Salut <@${chooseRecipient()}> !\n${messages[Math.floor(Math.random() * messages.length)]}\nPour savoir quelles plantes doivent être arrosées aujourd'hui, consulte la fiche de renseignement dans les locaux.`;
+    try {
+        await app.client.chat.postMessage({
+            channel: topic,
+            text: message,
+        });
+        logger.write(`[INFO] Message envoyé dans le canal\n`);
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi du message:', error);
+        logger.write(`[ERROR] Impossible d'envoyer le message: ${error.message}\n`);
+    }
+}
 
-month = datetime.datetime.now().month
+function scheduleMessages() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
 
-if 3 <= month <= 8:
-    schedule.every().tuesday.at(hour).do(send_message)
-    schedule.every().wednesday.at(hour).do(send_message)
-    schedule.every().thursday.at(hour).do(send_message)
-else:
-    schedule.every().wednesday.at(hour).do(send_message)
+    const daysToSchedule = (month >= 3 && month <= 8) ? ['Tuesday', 'Wednesday', 'Thursday'] : ['Wednesday'];
+    daysToSchedule.forEach(day => {
+        schedule.scheduleJob({ hour: 9, minute: 15, dayOfWeek: getDayIndex(day) }, sendMessage);
+    });
+}
 
-if __name__ == "__main__":
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
+function getDayIndex(dayName) {
+    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].indexOf(dayName);
+}
+
+(async () => {
+    await app.start(process.env.PORT || 3000);
+    logger.write(`[INFO] ⚡️ Rework Kevin est en cours d'exécution !\n`);
+    scheduleMessages();
+})();

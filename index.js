@@ -15,7 +15,7 @@ const app = new App({
 
 const topic = 'C07S58L52G0';
 const recipients = {
-    Luca:U07Q1SVHVU6,
+    // 'nom': 'id',
 };
 
 const messages = [
